@@ -1,5 +1,6 @@
 package cn.edu.neu.visualservice.service.impl;
 
+import cn.edu.neu.visualservice.bean.InterMetric;
 import cn.edu.neu.visualservice.bean.Statistic;
 import cn.edu.neu.visualservice.mapper.StatisticMapper;
 import cn.edu.neu.visualservice.service.StatisticService;
@@ -21,5 +22,10 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     public List<Statistic> queryStatisticForGaia(String dt, Long stepIndex1mi) {
         return statisticMapper.selectByDtIndexForGaia(dt, stepIndex1mi);
+    }
+
+    @Override
+    public List<InterMetric> queryInterNameList() {
+        return statisticMapper.selectAllInterInfo();
     }
 }
