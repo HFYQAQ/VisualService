@@ -11,4 +11,6 @@ public interface StatisticService {
     List<Statistic> queryStatisticForGaia(String dt, Long stepIndex1mi);
 
     List<InterMetric> queryInterNameList();
+
+    List<InterMetric> queryListByInter(String interName);
 }

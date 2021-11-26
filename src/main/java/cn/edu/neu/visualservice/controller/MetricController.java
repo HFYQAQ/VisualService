@@ -148,6 +148,52 @@ public class MetricController {
         return json;
     }
 
+    @RequestMapping("/metric/inter/getListByInter")
+    public String getInterList(@RequestParam(value = "inter_name", defaultValue = "") String interName) {
+        System.out.println("/metric/inter/getListByInter");
+
+        Map<String, List<InterMetric>> interMetricsByRidMap = statisticService.queryListByInter(interName)
+                .stream()
+                .collect(Collectors.groupingBy(InterMetric::getRid));
+
+        // to json
+        StringBuilder sb = new StringBuilder("{\"interName\":\"");
+        sb.append(interName).append("\",\"metricsByInter\":[");
+        for (Map.Entry<String, List<InterMetric>> entry : interMetricsByRidMap.entrySet()) {
+            List<InterMetric> list = entry.getValue();
+            if (list == null || list.size() == 0) {
+                continue;
+            }
+            String rName = list.get(0).getRName();
+
+            sb
+                    .append("{\"fRName\":\"")
+                    .append(rName)
+                    .append("\",\"turnDirList\":[");
+            for (InterMetric interMetric : list) {
+                sb
+                        .append("{\"turnDirNo\":")
+                        .append(interMetric.getTurnDirNo())
+                        .append(",\"travelTime\":")
+                        .append(interMetric.getTravelTime())
+                        .append(",\"delay\":")
+                        .append(interMetric.getDelay())
+                        .append(",\"stopCnt\":")
+                        .append(interMetric.getStopCnt())
+                        .append(",\"queue\":")
+                        .append(interMetric.getQueue())
+                        .append("},");
+            }
+            sb.deleteCharAt(sb.length() - 1);
+            sb.append("]},");
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append("]}");
+        String json = sb.toString();
+
+        return json;
+    }
+
     private PerformanceMetric calculatePerformanceMetric(List<Statistic> statistics, String dt, Long stepIndex1mi) {
         long totalAmount = 0;
         long maxDuration = 0;

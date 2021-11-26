@@ -28,4 +28,9 @@ public class StatisticServiceImpl implements StatisticService {
     public List<InterMetric> queryInterNameList() {
         return statisticMapper.selectAllInterInfo();
     }
+
+    @Override
+    public List<InterMetric> queryListByInter(String interName) {
+        return statisticMapper.selectListByInter(interName);
+    }
 }

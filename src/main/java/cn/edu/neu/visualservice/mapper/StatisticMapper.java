@@ -16,4 +16,7 @@ public interface StatisticMapper {
 
     @Select("select inter_id as interId, inter_name as interName from inter_metric")
     List<InterMetric> selectAllInterInfo();
+
+    @Select("select inter_id as interId, inter_name as interName, rid, r_name as rName, turn_dir_no as turnDirNo, travel_time as travelTime, delay, stop_cnt as stopCnt, queue from inter_metric where inter_name=#{inter_name}")
+    List<InterMetric> selectListByInter(@Param("inter_name") String interName);
 }
