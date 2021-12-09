@@ -1,11 +1,14 @@
 package cn.edu.neu.visualservice.controller;
 
 import cn.edu.neu.visualservice.bean.InterMetric;
+import cn.edu.neu.visualservice.bean.InterMetricV2;
 import cn.edu.neu.visualservice.bean.Statistic;
 import cn.edu.neu.visualservice.service.StatisticService;
 import cn.edu.neu.visualservice.struct.PerformanceMetric;
+import cn.edu.neu.visualservice.util.JsonHelper;
 import cn.edu.neu.visualservice.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -192,6 +195,51 @@ public class MetricController {
         String json = sb.toString();
 
         return json;
+    }
+
+    @RequestMapping("/metric/inter/getInterFTRidDateTpIndex")
+    public String getInterFTRidDateTpIndex(@RequestParam(value = "inter_id", defaultValue = "") String interId,
+                                           @RequestParam(value = "f_rid", defaultValue = "") String fRid,
+                                           @RequestParam(value = "turn_dir_no", defaultValue = "") Long turnDirNo,
+                                           @RequestParam(value = "t_rid", defaultValue = "") String tRid,
+                                           @RequestParam(value = "start_step_index", defaultValue = "") Long startStepIndex,
+                                           @RequestParam(value = "end_step_index", defaultValue = "") Long endStepIndex,
+                                           @RequestParam(value = "start_dt", defaultValue = "") String startDt,
+                                           @RequestParam(value = "end_dt", defaultValue = "") String endDt,
+                                           @RequestParam(value = "data_version", defaultValue = "") String dataVersion,
+                                           @RequestParam(value = "adcode", defaultValue = "") String adcode,
+                                           @RequestParam(value = "dt", defaultValue = "") String tp) {
+        System.out.println("/metric/inter/getInterFTRidDateTpIndex");
+
+        List<InterMetricV2> interMetricList = statisticService.queryInterFTRidDateTpIndex(interId, fRid, turnDirNo, tRid, startStepIndex, endStepIndex, startDt, endDt);
+
+        // to json
+        JsonHelper responseJson = new JsonHelper();
+        JsonHelper dataJson = new JsonHelper(true);
+        for (InterMetricV2 interMetric : interMetricList) {
+            JsonHelper interMetricJson = new JsonHelper();
+            interMetricJson.put("inter_id", interMetric.getInterId());
+            interMetricJson.put("f_rid", interMetric.getfRid());
+            interMetricJson.put("turn_dir_no", interMetric.getTurnDirNo());
+            interMetricJson.put("t_rid", tRid); //
+            interMetricJson.put("step_index", interMetric.getStepIndex());
+            interMetricJson.put("data_version", dataVersion); //
+            interMetricJson.put("adcode", adcode); //
+            interMetricJson.put("tp", tp); //
+            interMetricJson.put("travel_time", interMetric.getTravelTime());
+            interMetricJson.put("stop_cnt", interMetric.getStopCnt());
+            interMetricJson.put("delay_dur", interMetric.getDelayDur());
+            interMetricJson.put("queue_len", interMetric.getQueueLen());
+            interMetricJson.put("flow", -1d); //
+            interMetricJson.put("dt", endDt); //
+
+            dataJson.add(interMetricJson);
+        }
+        responseJson.put("data", dataJson);
+        responseJson.put("error", null);
+        responseJson.put("isError", false);
+//        responseJson.put("requestId", "43f24712-ca10-4ef9-8fab-ba7dae490277");
+        return responseJson.toString();
     }
 
     private PerformanceMetric calculatePerformanceMetric(List<Statistic> statistics, String dt, Long stepIndex1mi) {
