@@ -208,7 +208,7 @@ public class MetricController {
                                            @RequestParam(value = "end_dt", defaultValue = "") String endDt,
                                            @RequestParam(value = "data_version", defaultValue = "") String dataVersion,
                                            @RequestParam(value = "adcode", defaultValue = "") String adcode,
-                                           @RequestParam(value = "dt", defaultValue = "") String tp) {
+                                           @RequestParam(value = "tp", defaultValue = "") String tp) {
         System.out.println("/metric/inter/getInterFTRidDateTpIndex");
 
         List<InterMetricV2> interMetricList = statisticService.queryInterFTRidDateTpIndex(interId, fRid, turnDirNo, tRid, startStepIndex, endStepIndex, startDt, endDt);
@@ -235,7 +235,7 @@ public class MetricController {
 
             dataJson.add(interMetricJson);
         }
-        responseJson.put("data", dataJson);
+        responseJson.put("data", dataJson.toString().length() == 0 ? "[]" : dataJson);
         responseJson.put("error", null);
         responseJson.put("isError", false);
 //        responseJson.put("requestId", "43f24712-ca10-4ef9-8fab-ba7dae490277");
