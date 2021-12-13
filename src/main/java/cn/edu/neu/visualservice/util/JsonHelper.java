@@ -54,7 +54,7 @@ public class JsonHelper {
             Object val = entry.getValue();
             if (val instanceof JsonHelper) {
                 val = val.toString();
-            } else if (val instanceof String) {
+            } else if (val instanceof String && !val.equals("[]")) {
                 val = String.format("\"%s\"", val);
             }
 
