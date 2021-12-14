@@ -37,15 +37,17 @@ public class JsonHelper {
 
     public String format() {
         if (!isArr) {
+            json = "{}";
             return formatFromMap();
         } else {
+            json = "[]";
             return formatFromList();
         }
     }
 
     private String formatFromMap() {
         if (map == null || map.isEmpty()) {
-            return "";
+            return json;
         }
 
         StringBuilder sb = new StringBuilder("{");
@@ -71,7 +73,7 @@ public class JsonHelper {
 
     private String formatFromList() {
         if (list == null || list.isEmpty()) {
-            return "";
+            return json;
         }
 
         StringBuilder sb = new StringBuilder("[");
@@ -89,7 +91,7 @@ public class JsonHelper {
 
     @Override
     public String toString() {
-        if (json.equals("")) {
+        if (json.equals("") || json.equals("{}") || json.equals("[]")) {
             format();
         }
         return json;

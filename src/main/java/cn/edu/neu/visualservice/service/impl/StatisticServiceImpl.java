@@ -31,8 +31,8 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     @Override
-    public List<InterMetric> queryListByInter(String interName) {
-        return statisticMapper.selectListByInter(interName);
+    public List<InterMetric> queryListByInter(String interId) {
+        return statisticMapper.selectListByInter(interId);
     }
 
     @Override

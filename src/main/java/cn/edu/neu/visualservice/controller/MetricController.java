@@ -152,16 +152,15 @@ public class MetricController {
     }
 
     @RequestMapping("/metric/inter/getListByInter")
-    public String getInterList(@RequestParam(value = "inter_name", defaultValue = "") String interName) {
+    public String getInterList(@RequestParam(value = "inter_id", defaultValue = "") String interId) {
         System.out.println("/metric/inter/getListByInter");
 
-        Map<String, List<InterMetric>> interMetricsByRidMap = statisticService.queryListByInter(interName)
+        Map<String, List<InterMetric>> interMetricsByRidMap = statisticService.queryListByInter(interId)
                 .stream()
                 .collect(Collectors.groupingBy(InterMetric::getRid));
 
         // to json
-        StringBuilder sb = new StringBuilder("{\"interName\":\"");
-        sb.append(interName).append("\",\"metricsByInter\":[");
+        JsonHelper arrJson1 = new JsonHelper(true);
         for (Map.Entry<String, List<InterMetric>> entry : interMetricsByRidMap.entrySet()) {
             List<InterMetric> list = entry.getValue();
             if (list == null || list.size() == 0) {
@@ -169,32 +168,26 @@ public class MetricController {
             }
             String rName = list.get(0).getRName();
 
-            sb
-                    .append("{\"fRName\":\"")
-                    .append(rName)
-                    .append("\",\"turnDirList\":[");
+            JsonHelper arrJson2 = new JsonHelper(true);
             for (InterMetric interMetric : list) {
-                sb
-                        .append("{\"turnDirNo\":")
-                        .append(interMetric.getTurnDirNo())
-                        .append(",\"travelTime\":")
-                        .append(interMetric.getTravelTime())
-                        .append(",\"delay\":")
-                        .append(interMetric.getDelay())
-                        .append(",\"stopCnt\":")
-                        .append(interMetric.getStopCnt())
-                        .append(",\"queue\":")
-                        .append(interMetric.getQueue())
-                        .append("},");
+                JsonHelper jsonHelper = new JsonHelper();
+                jsonHelper.put("turnDirNo", interMetric.getTurnDirNo());
+                jsonHelper.put("travelTime", interMetric.getTravelTime());
+                jsonHelper.put("delay", interMetric.getDelay());
+                jsonHelper.put("stopCnt", interMetric.getStopCnt());
+                jsonHelper.put("queue", interMetric.getQueue());
+                arrJson2.add(jsonHelper);
             }
-            sb.deleteCharAt(sb.length() - 1);
-            sb.append("]},");
+            JsonHelper interMetricJson = new JsonHelper();
+            interMetricJson.put("fRName", rName);
+            interMetricJson.put("turnDirList", arrJson2);
+            arrJson1.add(interMetricJson);
         }
-        sb.deleteCharAt(sb.length() - 1);
-        sb.append("]}");
-        String json = sb.toString();
+        JsonHelper responseJson = new JsonHelper();
+        responseJson.put("interId", interId);
+        responseJson.put("metricsByInter", arrJson1);
 
-        return json;
+        return responseJson.toString();
     }
 
     @RequestMapping("/metric/inter/trafficproduct/getInterFTRidDateTpIndex")
@@ -235,7 +228,7 @@ public class MetricController {
 
             dataJson.add(interMetricJson);
         }
-        responseJson.put("data", dataJson.toString().length() == 0 ? "[]" : dataJson);
+        responseJson.put("data", dataJson);
         responseJson.put("error", null);
         responseJson.put("isError", false);
 //        responseJson.put("requestId", "43f24712-ca10-4ef9-8fab-ba7dae490277");
