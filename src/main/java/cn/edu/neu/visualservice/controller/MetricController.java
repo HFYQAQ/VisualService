@@ -197,7 +197,7 @@ public class MetricController {
         return json;
     }
 
-    @RequestMapping("/metric/inter/getInterFTRidDateTpIndex")
+    @RequestMapping("/metric/inter/trafficproduct/getInterFTRidDateTpIndex")
     public String getInterFTRidDateTpIndex(@RequestParam(value = "inter_id", defaultValue = "") String interId,
                                            @RequestParam(value = "f_rid", defaultValue = "") String fRid,
                                            @RequestParam(value = "turn_dir_no", defaultValue = "") Long turnDirNo,
