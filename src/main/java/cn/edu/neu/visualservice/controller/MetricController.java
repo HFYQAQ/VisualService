@@ -23,103 +23,103 @@ public class MetricController {
 
     @RequestMapping("/metric/performance")
     public String getStatistic(@RequestParam(value = "dt", defaultValue = "20210327") String dt,
-                                       @RequestParam(value = "step_index_1mi", defaultValue = "884") Long stepIndex1mi) {
+                                       @RequestParam(value = "start_step_index_1mi", defaultValue = "0") Long startStepIndex1mi,
+                                       @RequestParam(value = "end_step_index_1mi", defaultValue = "1439") Long endStepIndex1mi) {
         System.out.println("/metric/performance");
 
         // flink
         // prepare data
-        Map<String, List<Statistic>> statisticsPerJob = statisticService.queryStatisticForFlink(dt, stepIndex1mi)
+        Map<Long, List<Statistic>> statisticsPerJob = statisticService.queryStatisticForFlink(dt, startStepIndex1mi, endStepIndex1mi)
                 .stream()
-                .collect(Collectors.groupingBy(Statistic::getJobName));
-        List<Statistic> statistics = null;
-        for (Map.Entry<String, List<Statistic>> entry : statisticsPerJob.entrySet()) {
-            statistics = entry.getValue();
-            break;
-        }
-        if (statistics == null || statistics.size() == 0) {
-            return "{}";
-        }
-        // calculate
-        PerformanceMetric performanceMetric = calculatePerformanceMetric(statistics, dt, stepIndex1mi);
-        // to json
-        String jsonForFlink = Utils.performanceMetric2Json(performanceMetric);
+                .collect(Collectors.groupingBy(Statistic::getStepIndex1mi));
+        JsonHelper arrJsonForFlink = new JsonHelper(true);
+        for (Map.Entry<Long, List<Statistic>> entry : statisticsPerJob.entrySet()) {
+            Long stepIndex1mi = entry.getKey();
+            List<Statistic> statistics = entry.getValue();
 
-        // gaia
-        statisticsPerJob = statisticService.queryStatisticForGaia(dt, stepIndex1mi)
+            PerformanceMetric performanceMetric = calculatePerformanceMetric(statistics, dt, stepIndex1mi);
+            JsonHelper json = new JsonHelper();
+            json.put("step_index", stepIndex1mi);
+            json.put("throughput", performanceMetric.getThroughput());
+            json.put("timeDelay", performanceMetric.getDelay());
+            arrJsonForFlink.add(json);
+        }
+
+        statisticsPerJob = statisticService.queryStatisticForGaia(dt, startStepIndex1mi, endStepIndex1mi)
                 .stream()
-                .collect(Collectors.groupingBy(Statistic::getJobName));
-        statistics = null;
-        for (Map.Entry<String, List<Statistic>> entry : statisticsPerJob.entrySet()) {
-            statistics = entry.getValue();
-            break;
-        }
-        if (statistics == null || statistics.size() == 0) {
-            return "{}";
-        }
-        // calculate
-        performanceMetric = calculatePerformanceMetric(statistics, dt, stepIndex1mi);
-        // to json
-        String jsonForGaia = Utils.performanceMetric2Json(performanceMetric);
+                .collect(Collectors.groupingBy(Statistic::getStepIndex1mi));
+        JsonHelper arrJsonForGaia = new JsonHelper(true);
+        for (Map.Entry<Long, List<Statistic>> entry : statisticsPerJob.entrySet()) {
+            Long stepIndex1mi = entry.getKey();
+            List<Statistic> statistics = entry.getValue();
 
-        // to json
-        // { "flink": flinkjson, "gaia": ga
-        String json = "{\"flink\": " + jsonForFlink + ", \"gaia\": " + jsonForGaia + "}";
-        return json;
+            PerformanceMetric performanceMetric = calculatePerformanceMetric(statistics, dt, stepIndex1mi);
+            JsonHelper json = new JsonHelper();
+            json.put("step_index", stepIndex1mi);
+            json.put("throughput", performanceMetric.getThroughput());
+            json.put("timeDelay", performanceMetric.getDelay());
+            arrJsonForGaia.add(json);
+        }
+
+        JsonHelper responseJson = new JsonHelper();
+        responseJson.put("flink", arrJsonForFlink);
+        responseJson.put("gaia", arrJsonForGaia);
+        return responseJson.toString();
     }
 
-    @RequestMapping("/metric/performance/flink")
-    public String getStatisticForFlink(@RequestParam(value = "dt", defaultValue = "20210327") String dt,
-                               @RequestParam(value = "step_index_1mi", defaultValue = "884") Long stepIndex1mi) {
-        System.out.println("/metric/performance/flink");
-
-        // prepare data
-        Map<String, List<Statistic>> statisticsPerJob = statisticService.queryStatisticForFlink(dt, stepIndex1mi)
-                .stream()
-                .collect(Collectors.groupingBy(Statistic::getJobName));
-        List<Statistic> statistics = null;
-        for (Map.Entry<String, List<Statistic>> entry : statisticsPerJob.entrySet()) {
-            statistics = entry.getValue();
-            break;
-        }
-        if (statistics == null || statistics.size() == 0) {
-            return "{}";
-        }
-
-        // calculate
-        PerformanceMetric performanceMetric = calculatePerformanceMetric(statistics, dt, stepIndex1mi);
-
-        // to json
-        String json = Utils.performanceMetric2Json(performanceMetric);
-
-        return json;
-    }
-
-    @RequestMapping("/metric/performance/gaia")
-    public String getStatisticForGaia(@RequestParam(value = "dt", defaultValue = "20210327") String dt,
-                               @RequestParam(value = "step_index_1mi", defaultValue = "884") Long stepIndex1mi) {
-        System.out.println("/metric/performance/gaia");
-
-        Map<String, List<Statistic>> statisticsPerJob = statisticService.queryStatisticForGaia(dt, stepIndex1mi)
-                .stream()
-                .collect(Collectors.groupingBy(Statistic::getJobName));
-
-        List<Statistic> statistics = null;
-        for (Map.Entry<String, List<Statistic>> entry : statisticsPerJob.entrySet()) {
-            statistics = entry.getValue();
-            break;
-        }
-        if (statistics == null || statistics.size() == 0) {
-            return "{}";
-        }
-
-        // calculate
-        PerformanceMetric performanceMetric = calculatePerformanceMetric(statistics, dt, stepIndex1mi);
-
-        // to json
-        String json = Utils.performanceMetric2Json(performanceMetric);
-
-        return json;
-    }
+//    @RequestMapping("/metric/performance/flink")
+//    public String getStatisticForFlink(@RequestParam(value = "dt", defaultValue = "20210327") String dt,
+//                               @RequestParam(value = "step_index_1mi", defaultValue = "884") Long stepIndex1mi) {
+//        System.out.println("/metric/performance/flink");
+//
+//        // prepare data
+//        Map<String, List<Statistic>> statisticsPerJob = statisticService.queryStatisticForFlink(dt, stepIndex1mi)
+//                .stream()
+//                .collect(Collectors.groupingBy(Statistic::getJobName));
+//        List<Statistic> statistics = null;
+//        for (Map.Entry<String, List<Statistic>> entry : statisticsPerJob.entrySet()) {
+//            statistics = entry.getValue();
+//            break;
+//        }
+//        if (statistics == null || statistics.size() == 0) {
+//            return "{}";
+//        }
+//
+//        // calculate
+//        PerformanceMetric performanceMetric = calculatePerformanceMetric(statistics, dt, stepIndex1mi);
+//
+//        // to json
+//        String json = Utils.performanceMetric2Json(performanceMetric);
+//
+//        return json;
+//    }
+//
+//    @RequestMapping("/metric/performance/gaia")
+//    public String getStatisticForGaia(@RequestParam(value = "dt", defaultValue = "20210327") String dt,
+//                               @RequestParam(value = "step_index_1mi", defaultValue = "884") Long stepIndex1mi) {
+//        System.out.println("/metric/performance/gaia");
+//
+//        Map<String, List<Statistic>> statisticsPerJob = statisticService.queryStatisticForGaia(dt, stepIndex1mi)
+//                .stream()
+//                .collect(Collectors.groupingBy(Statistic::getJobName));
+//
+//        List<Statistic> statistics = null;
+//        for (Map.Entry<String, List<Statistic>> entry : statisticsPerJob.entrySet()) {
+//            statistics = entry.getValue();
+//            break;
+//        }
+//        if (statistics == null || statistics.size() == 0) {
+//            return "{}";
+//        }
+//
+//        // calculate
+//        PerformanceMetric performanceMetric = calculatePerformanceMetric(statistics, dt, stepIndex1mi);
+//
+//        // to json
+//        String json = Utils.performanceMetric2Json(performanceMetric);
+//
+//        return json;
+//    }
 
     @RequestMapping("/metric/inter/info")
     public String getInterList() {

@@ -16,13 +16,13 @@ public class StatisticServiceImpl implements StatisticService {
     StatisticMapper statisticMapper;
 
     @Override
-    public List<Statistic> queryStatisticForFlink(String dt, Long stepIndex1mi) {
-        return statisticMapper.selectByDtIndexForFlink(dt, stepIndex1mi);
+    public List<Statistic> queryStatisticForFlink(String dt, Long startStepIndex1mi, Long endStepIndex1mi) {
+        return statisticMapper.selectByDtIndexForFlink(dt, startStepIndex1mi, endStepIndex1mi);
     }
 
     @Override
-    public List<Statistic> queryStatisticForGaia(String dt, Long stepIndex1mi) {
-        return statisticMapper.selectByDtIndexForGaia(dt, stepIndex1mi);
+    public List<Statistic> queryStatisticForGaia(String dt, Long startStepIndex1mi, Long endStepIndex1mi) {
+        return statisticMapper.selectByDtIndexForGaia(dt, startStepIndex1mi, endStepIndex1mi);
     }
 
     @Override
