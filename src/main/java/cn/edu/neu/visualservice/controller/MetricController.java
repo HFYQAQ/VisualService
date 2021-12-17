@@ -21,7 +21,7 @@ public class MetricController {
     @Autowired
     private StatisticService statisticService;
 
-    @RequestMapping("/metric/performance")
+    @RequestMapping(value="/metric/performance", produces = {"application/json;charset=UTF-8"})
     public String getStatistic(@RequestParam(value = "dt", defaultValue = "20210327") String dt,
                                        @RequestParam(value = "start_step_index_1mi", defaultValue = "0") Long startStepIndex1mi,
                                        @RequestParam(value = "end_step_index_1mi", defaultValue = "1439") Long endStepIndex1mi) {
@@ -121,7 +121,7 @@ public class MetricController {
 //        return json;
 //    }
 
-    @RequestMapping("/metric/inter/info")
+    @RequestMapping(value = "/metric/inter/info", produces = {"application/json;charset=UTF-8"})
     public String getInterList() {
         System.out.println("/metric/inter/info");
 
@@ -151,7 +151,7 @@ public class MetricController {
         return json;
     }
 
-    @RequestMapping("/metric/inter/getListByInter")
+    @RequestMapping(value = "/metric/inter/getListByInter", produces = {"application/json;charset=UTF-8"})
     public String getInterList(@RequestParam(value = "inter_id", defaultValue = "") String interId) {
         System.out.println("/metric/inter/getListByInter");
 
@@ -190,7 +190,7 @@ public class MetricController {
         return responseJson.toString();
     }
 
-    @RequestMapping("/metric/inter/trafficproduct/getInterFTRidDateTpIndex")
+    @RequestMapping(value = "/metric/inter/trafficproduct/getInterFTRidDateTpIndex", produces = {"application/json;charset=UTF-8"})
     public String getInterFTRidDateTpIndex(@RequestParam(value = "inter_id", defaultValue = "") String interId,
                                            @RequestParam(value = "f_rid", defaultValue = "") String fRid,
                                            @RequestParam(value = "turn_dir_no", defaultValue = "") Long turnDirNo,
