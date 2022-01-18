@@ -13,7 +13,7 @@ public interface StatisticService {
 
     List<InterMetric> queryInterNameList();
 
-    List<InterMetric> queryListByInter(String interId);
+    List<InterMetric> queryListByInter(Long stepIndex, String interId);
 
     List<InterMetricV2> queryInterFTRidDateTpIndex(String interId, String fRid, Long turnDirNo, String tRid, Long startStepIndex, Long endStepIndex, String startDt, String endDt);
 }

@@ -152,10 +152,10 @@ public class MetricController {
     }
 
     @RequestMapping(value = "/metric/inter/getListByInter", produces = {"application/json;charset=UTF-8"})
-    public String getInterList(@RequestParam(value = "inter_id", defaultValue = "") String interId) {
+    public String getInterList(@RequestParam(value = "step_index", defaultValue = "884") Long stepIndex, @RequestParam(value = "inter_id", defaultValue = "") String interId) {
         System.out.println("/metric/inter/getListByInter");
 
-        Map<String, List<InterMetric>> interMetricsByRidMap = statisticService.queryListByInter(interId)
+        Map<String, List<InterMetric>> interMetricsByRidMap = statisticService.queryListByInter(stepIndex, interId)
                 .stream()
                 .collect(Collectors.groupingBy(InterMetric::getRid));
 
@@ -190,7 +190,7 @@ public class MetricController {
         return responseJson.toString();
     }
 
-    @RequestMapping(value = "/metric/inter/trafficproduct/getInterFTRidDateTpIndex", produces = {"application/json;charset=UTF-8"})
+    @RequestMapping(value = "/trafficproduct/getInterFTRidDateTpIndex", produces = {"application/json;charset=UTF-8"})
     public String getInterFTRidDateTpIndex(@RequestParam(value = "inter_id", defaultValue = "") String interId,
                                            @RequestParam(value = "f_rid", defaultValue = "") String fRid,
                                            @RequestParam(value = "turn_dir_no", defaultValue = "") Long turnDirNo,
@@ -245,5 +245,12 @@ public class MetricController {
         double throughput = totalAmount * 1.0 / maxDuration * 1000;
         double delay = maxDuration * 1.0 / totalAmount;
         return new PerformanceMetric(statistics.get(0).getJobName(), dt, stepIndex1mi, throughput, delay);
+    }
+
+    @RequestMapping(value = "/metric/test", produces = {"application/json;charset=UTF-8"})
+    public String test() {
+        System.out.println("/metric/test");
+
+        return "[{\"text\":\"hfy\"},{\"text\":\"js\"}]";
     }
 }
