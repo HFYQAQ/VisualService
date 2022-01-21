@@ -27,6 +27,9 @@ public class MetricController {
                                        @RequestParam(value = "end_step_index_1mi", defaultValue = "1439") Long endStepIndex1mi) {
         System.out.println("/metric/performance");
 
+        // 只显示当前半小时内的数据
+        startStepIndex1mi = endStepIndex1mi - 29;
+
         // flink
         // prepare data
         Map<Long, List<Statistic>> statisticsPerJob = statisticService.queryStatisticForFlink(dt, startStepIndex1mi, endStepIndex1mi)
