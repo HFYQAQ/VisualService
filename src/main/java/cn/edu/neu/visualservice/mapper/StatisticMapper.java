@@ -9,10 +9,10 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 public interface StatisticMapper {
-    @Select("select job_name as jobName, subtask_index as subtaskIndex, step_index_1mi as stepIndex1mi, amount, duration from statistic where job_name like 'CityBrainJob-%' and step_index_1mi>=#{start_step_index_1mi} and step_index_1mi<=#{end_step_index_1mi}")
+    @Select("select job_name as jobName, subtask_index as subtaskIndex, step_index_1mi as stepIndex1mi, amount, duration from statistic where job_name like 'CityBrainJob-%' and step_index_1mi>=#{start_step_index_1mi} and step_index_1mi<=#{end_step_index_1mi} and is_exhibition=1")
     List<Statistic> selectByDtIndexForFlink(@Param("dt") String dt, @Param("start_step_index_1mi") Long startStepIndex, @Param("end_step_index_1mi") Long endStepIndex);
 
-    @Select("select job_name as jobName, subtask_index as subtaskIndex, step_index_1mi as stepIndex1mi, amount, duration from statistic where job_name like 'CityBrainJobWithCache-%' and step_index_1mi>=#{start_step_index_1mi} and step_index_1mi<=#{end_step_index_1mi}")
+    @Select("select job_name as jobName, subtask_index as subtaskIndex, step_index_1mi as stepIndex1mi, amount, duration from statistic where job_name like 'CityBrainJobWithCache-%' and step_index_1mi>=#{start_step_index_1mi} and step_index_1mi<=#{end_step_index_1mi} and is_exhibition=1")
     List<Statistic> selectByDtIndexForGaia(@Param("dt") String dt, @Param("start_step_index_1mi") Long startStepIndex, @Param("end_step_index_1mi") Long endStepIndex);
 
     @Select("select distinct b.inter_id as interId, b.inter_name as interName from dws_tfc_state_rid_tp_lastspeed_rt a inner join dwd_tfc_rltn_wide_inter_lane b on a.rid=b.rid;")
