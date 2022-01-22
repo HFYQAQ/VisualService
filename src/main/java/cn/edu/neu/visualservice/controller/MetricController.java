@@ -30,10 +30,8 @@ public class MetricController {
         // 只显示当前半小时内的数据
         startStepIndex1mi = endStepIndex1mi - 29;
 
-        // flink
-        // prepare data
-        JsonHelper arrJsonForFlink = new JsonHelper(true);
-        statisticService.queryStatisticForFlink(dt, startStepIndex1mi, endStepIndex1mi)
+        JsonHelper arrJsonForFlink142 = new JsonHelper(true);
+        statisticService.queryStatisticForFlink142(dt, startStepIndex1mi, endStepIndex1mi)
                 .stream()
                 .collect(Collectors.groupingBy(Statistic::getStepIndex1mi))
                 .entrySet()
@@ -48,7 +46,45 @@ public class MetricController {
                     json.put("step_index", stepIndex1mi);
                     json.put("throughput", performanceMetric.getThroughput());
                     json.put("timeDelay", performanceMetric.getDelay());
-                    arrJsonForFlink.add(json);
+                    arrJsonForFlink142.add(json);
+                });
+
+        JsonHelper arrJsonForFlink180 = new JsonHelper(true);
+        statisticService.queryStatisticForFlink180(dt, startStepIndex1mi, endStepIndex1mi)
+                .stream()
+                .collect(Collectors.groupingBy(Statistic::getStepIndex1mi))
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEachOrdered(entry -> {
+                    Long stepIndex1mi = entry.getKey();
+                    List<Statistic> statistics = entry.getValue();
+
+                    PerformanceMetric performanceMetric = calculatePerformanceMetric(statistics, dt, stepIndex1mi);
+                    JsonHelper json = new JsonHelper();
+                    json.put("step_index", stepIndex1mi);
+                    json.put("throughput", performanceMetric.getThroughput());
+                    json.put("timeDelay", performanceMetric.getDelay());
+                    arrJsonForFlink180.add(json);
+                });
+
+        JsonHelper arrJsonForFlink1122 = new JsonHelper(true);
+        statisticService.queryStatisticForFlink1122(dt, startStepIndex1mi, endStepIndex1mi)
+                .stream()
+                .collect(Collectors.groupingBy(Statistic::getStepIndex1mi))
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEachOrdered(entry -> {
+                    Long stepIndex1mi = entry.getKey();
+                    List<Statistic> statistics = entry.getValue();
+
+                    PerformanceMetric performanceMetric = calculatePerformanceMetric(statistics, dt, stepIndex1mi);
+                    JsonHelper json = new JsonHelper();
+                    json.put("step_index", stepIndex1mi);
+                    json.put("throughput", performanceMetric.getThroughput());
+                    json.put("timeDelay", performanceMetric.getDelay());
+                    arrJsonForFlink1122.add(json);
                 });
 
         JsonHelper arrJsonForGaia = new JsonHelper(true);
@@ -71,7 +107,9 @@ public class MetricController {
                 });
 
         JsonHelper responseJson = new JsonHelper();
-        responseJson.put("flink", arrJsonForFlink);
+        responseJson.put("flink142", arrJsonForFlink142);
+        responseJson.put("flink180", arrJsonForFlink180);
+        responseJson.put("flink1122", arrJsonForFlink1122);
         responseJson.put("gaia", arrJsonForGaia);
         return responseJson.toString();
     }
