@@ -183,6 +183,22 @@ public class MetricController {
 
         // to json
         StringBuilder sb = new StringBuilder("{\"interInfoList\":[");
+        // 挑几个展示效果好点的放前面
+        Map<String, String> select = new HashMap<>();
+        select.put("14SQP09F310", "沪青平公路与金溪路路口");
+        select.put("1527N09HIH0", "凉城路与汶水东路路口");
+        select.put("1528509H8R0", "宝昌路与芷江中路路口");
+        select.put("1528J09GTI0", "金陵中路与黄陂南路路口");
+        select.put("1528Q09GRO0", "自忠路与马当路路口");
+        for (Map.Entry<String, String> entry : select.entrySet()) {
+            sb
+                    .append("{\"interId\":\"")
+                    .append(entry.getKey())
+                    .append("\",\"interName\":\"")
+                    .append(entry.getValue())
+                    .append("\"},");
+        }
+        //
         for (Map.Entry<String, String> entry : interInfosMap.entrySet()) {
             sb
                     .append("{\"interId\":\"")
