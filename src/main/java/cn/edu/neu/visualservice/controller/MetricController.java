@@ -313,7 +313,14 @@ public class MetricController {
                                            @RequestParam(value = "data_version", defaultValue = "") String dataVersion,
                                            @RequestParam(value = "adcode", defaultValue = "") String adcode,
                                            @RequestParam(value = "tp", defaultValue = "") String tp) {
-        System.out.println("/metric/inter/getInterFTRidDateTpIndex");
+        System.out.printf("[%s] /metric/inter/getInterFTRidDateTpIndex\n", new Date());
+
+        List<InterMetricV2> interMetricList = null;
+        try {
+            interMetricList = statisticService.queryInterFTRidDateTpIndex(interId, fRid, turnDirNo, tRid, startStepIndex, endStepIndex, startDt, endDt);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         int hash = (interId + fRid + turnDirNo + endDt).hashCode();
         Random random = new Random(hash);
@@ -342,6 +349,7 @@ public class MetricController {
         responseJson.put("data", dataJson);
         responseJson.put("error", null);
         responseJson.put("isError", false);
+        responseJson.put("code", "SUCCESS");
         return responseJson.toString();
     }
 
